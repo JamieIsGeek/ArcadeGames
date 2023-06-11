@@ -2,3 +2,7 @@ name: ArcadeGames
 version: '${version}'
 main: uk.jamieisgeek.arcadegames.ArcadeGames
 api-version: 1.19
+commands:
+  pigjousting:
+    description: Pig Jousting
+    usage: /<command>
