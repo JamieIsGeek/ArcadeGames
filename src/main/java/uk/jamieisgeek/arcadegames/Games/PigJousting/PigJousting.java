@@ -51,7 +51,7 @@ public class PigJousting {
             pig.setGravity(false);
             pig.setSilent(true);
             pig.setSaddle(true);
-            pig.setPassenger(playerObj);
+            pig.addPassenger(playerObj);
 
             addPig(player, pig);
         });
