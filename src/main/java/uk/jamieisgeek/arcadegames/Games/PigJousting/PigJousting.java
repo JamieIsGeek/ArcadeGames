@@ -2,6 +2,7 @@ package uk.jamieisgeek.arcadegames.Games.PigJousting;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Pig;
 import org.bukkit.entity.Player;
 import uk.jamieisgeek.arcadegames.ArcadeGames;
@@ -18,6 +19,7 @@ public class PigJousting {
     private Map<UUID, Pig> pigs = new HashMap<UUID, Pig>();
     private State gameState;
     private final ArcadeGames plugin = ArcadeGames.getInstance();
+
     public PigJousting(Set<UUID> players) {
         this.players = players;
         this.gameState = State.WAITING;
@@ -36,14 +38,17 @@ public class PigJousting {
         ArcadeGames.Log("Starting Pig Jousting!");
 
         setGameState(State.STARTING);
+        double slice = 2 * Math.PI / players.size();
+        World world = Bukkit.getWorld((String) plugin.getConfigHandler().getFromConfig("pigjousting.world"));
         players.forEach(player -> {
             Player playerObj = Bukkit.getPlayer(player);
-            playerObj.teleport(new Location(
-                    Bukkit.getWorld(plugin.getConfigHandler().getFromConfig("pigjousting.world").toString()),
-                    (double) plugin.getConfigHandler().getFromConfig("pigjousting.x"),
-                    (double) plugin.getConfigHandler().getFromConfig("pigjousting.y"),
-                    (double) plugin.getConfigHandler().getFromConfig("pigjousting.z")
-            ));
+            for (int i = 0; i < players.size(); i++) {
+                double angle = slice * i;
+                double x = (double) plugin.getConfigHandler().getFromConfig("pigjousting.x") + (double) plugin.getConfigHandler().getFromConfig("pigjousting.radius") * Math.cos(angle); // Calculate the X coordinate of the player
+                double z = (double) plugin.getConfigHandler().getFromConfig("pigjousting.z") + (double) plugin.getConfigHandler().getFromConfig("pigjousting.radius") * Math.sin(angle); // Calculate the Z coordinate of the player
+                Location playerLocation = new Location(world, x, (double) plugin.getConfigHandler().getFromConfig("pigjousting.y"), z);
+                playerObj.teleport(playerLocation);
+            }
 
             Pig pig = playerObj.getWorld().spawn(playerObj.getLocation(), Pig.class);
             pig.setAI(false);
